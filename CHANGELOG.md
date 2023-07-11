@@ -1,3 +1,15 @@
+# 1.0.0-15 - July 4, 2023
+- Fix bug in Android `saveDocument`
+
+# 1.0.0-14 - June 21, 2023
+- Update Android to v10.2.0
+
+# 1.0.0-13 - May 10, 2023
+- Update Android to v10.1.0
+
+# 1.0.0-9 - Mar 27, 2023
+- Update Android to v10.0.0
+
 # 1.0.0-8 - Feb 17, 2023
 - Update Android to v9.5.0
 
