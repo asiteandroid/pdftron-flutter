@@ -1297,6 +1297,14 @@ public class PluginUtils {
         configInfo.setFileUri(fileUri);
 
         if (fileUri != null) {
+            pdfViewCtrlConfig
+                    .setThumbnailUseEmbedded(true)
+                    .setThumbnailGenerateAtRuntime(true)
+                    .setThumbnailUseDiskCache(true)
+                    .setThumbnailMaxSideLength(1024)
+                    .setThumbnailMaxAbsoluteCacheSize(1024 * 1024 * 100)
+                    .setThumbnailMaxPercentageCacheSize(0.5);
+
             builder.openUrlCachePath(configInfo.getOpenUrlPath())
                     .saveCopyExportPath(configInfo.getExportPath());
             if (disabledTools.size() > 0) {
