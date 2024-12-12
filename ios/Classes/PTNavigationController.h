@@ -8,7 +8,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PTNavigationController : UINavigationController
 
-@property (nonatomic, weak, nullable) PTTabbedDocumentViewController* tabbedDocumentViewController;
+@property (nonatomic, strong) PTTabbedDocumentViewController* tabbedDocumentViewController;
+@property (nonatomic, strong) PTFlutterDocumentController* ptDocumentController;
 
 @end
 

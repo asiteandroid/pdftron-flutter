@@ -2,7 +2,7 @@
 
 @interface PTNavigationController()
 
-@property (nonatomic, weak, readonly, nullable) PTFlutterDocumentController* currentFlutterDocumentController;
+@property (nonatomic, strong, readonly, nullable) PTFlutterDocumentController* currentFlutterDocumentController;
 
 @end
 
@@ -27,7 +27,7 @@
 }
 
 - (PTFlutterDocumentController *)currentFlutterDocumentController {
-    return (PTFlutterDocumentController *)[PdftronFlutterPlugin PT_getSelectedDocumentController:self.tabbedDocumentViewController];
+    return self.ptDocumentController;
 }
 
 @end

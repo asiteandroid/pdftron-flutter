@@ -520,6 +520,8 @@ typedef enum
 @interface PdftronFlutterPlugin : NSObject<FlutterPlugin, FlutterStreamHandler, FlutterPlatformView>
 
 @property (nonatomic, strong) PTTabbedDocumentViewController *tabbedDocumentViewController;
+@property (nonatomic, strong) PTDocumentController *ptFlutterDocumentController;
+
 @property (nonatomic) BOOL isBase64;
 
 + (PdftronFlutterPlugin *)registerWithFrame:(CGRect)frame viewIdentifier:(int64_t)viewId messenger:(NSObject<FlutterBinaryMessenger> *)messenger;

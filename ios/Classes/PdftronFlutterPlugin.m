@@ -72,11 +72,26 @@
     }];
     
     [instance registerEventChannels:messenger];
-    
-    [instance initTabbedDocumentViewController];
+    [instance initPTDocumentComtroller];
+//    [instance initTabbedDocumentViewController];
     [instance presentTabbedDocumentViewController];
     
     return instance;
+}
+
+-(void) initPTDocumentComtroller
+{
+    self.ptFlutterDocumentController = [[PTFlutterDocumentController alloc]init];
+    self.ptFlutterDocumentController.delegate = self;
+    
+    ((PTFlutterDocumentController*)self.ptFlutterDocumentController).plugin = self;
+    
+    if (self.config && ((PTFlutterDocumentController*)self.ptFlutterDocumentController).isDocCtrlrConfigured == NO) {
+        [[self class] configureDocumentController:(PTFlutterDocumentController*)self.ptFlutterDocumentController
+                                           withConfig:self.config];
+        ((PTFlutterDocumentController *)self.ptFlutterDocumentController).docCtrlrConfigured = YES;
+    }
+    
 }
 
 - (void)initTabbedDocumentViewController
@@ -99,15 +114,15 @@
 
 - (void)presentTabbedDocumentViewController
 {
-    PTNavigationController *navigationController = [[PTNavigationController alloc] initWithRootViewController:self.tabbedDocumentViewController];
+    PTNavigationController *navigationController = [[PTNavigationController alloc] initWithRootViewController:self.ptFlutterDocumentController];
     
-    navigationController.tabbedDocumentViewController = self.tabbedDocumentViewController;
+    navigationController.ptDocumentController = (PTFlutterDocumentController *)self.ptFlutterDocumentController;
     
     UIViewController *presentingViewController = UIApplication.sharedApplication.keyWindow.rootViewController;
     
     if (self.isWidgetView) {
-        [presentingViewController addChildViewController:navigationController];
-        [navigationController didMoveToParentViewController:presentingViewController];
+        [presentingViewController addChildViewController:self.ptFlutterDocumentController];
+        [self.ptFlutterDocumentController didMoveToParentViewController:presentingViewController];
         
     } else {
         navigationController.modalPresentationStyle = UIModalPresentationFullScreen;
@@ -1354,18 +1369,13 @@
 -(UIView*)view
 {
     // Note: this will only be called if it is the widget version
-    return self.tabbedDocumentViewController.navigationController.view;
+    return self.ptFlutterDocumentController.view;
 }
 
 #pragma mark - Cleanup
 
 -(void)dealloc
 {
-    if (self.isWidgetView)
-    {
-        [self.tabbedDocumentViewController.navigationController willMoveToParentViewController:nil];
-        [self.tabbedDocumentViewController.navigationController removeFromParentViewController];
-    }
 }
 
 #pragma mark - EventSinks
@@ -1851,12 +1861,9 @@
     self.config = config;
     
     // get base
-    
-    if (!self.tabbedDocumentViewController) {
-        [self initTabbedDocumentViewController];
+    if(!self.ptFlutterDocumentController){
+        [self initPTDocumentComtroller];
     }
-    
-    [PdftronFlutterPlugin configureTabbedDocumentViewController:self.tabbedDocumentViewController withConfig:config];
     
     NSError* error;
     
@@ -1880,9 +1887,8 @@
         } else if ([document hasPrefix:@"/"]) {
             fileURL = [NSURL fileURLWithPath:document];
         }
-            
-        [self.tabbedDocumentViewController openDocumentWithURL:fileURL
-                                                      password:password];
+        [self.ptFlutterDocumentController openDocumentWithURL:fileURL password:password];
+
     } else {
         NSString *base64FileExtension = @".pdf";
         if([[configDict allKeys] containsObject:PTBase64FileExtensionKey]) {
@@ -1908,19 +1914,11 @@
                 return;
             }
             
-            [[(PTFlutterTabbedDocumentController *)(self.tabbedDocumentViewController) tempFiles] addObject:path];
-            
-            [self.tabbedDocumentViewController openDocumentWithURL:fileURL
-                                                          password:password];
+            [self.ptFlutterDocumentController openDocumentWithURL:fileURL password:password];
         }
     }
     
-    if (!self.tabbedDocumentViewController.navigationController) {
-        
-        [self presentTabbedDocumentViewController];
-    }
-    
-    ((PTFlutterDocumentController*)self.tabbedDocumentViewController.childViewControllers.lastObject).openResult = flutterResult;
+    ((PTFlutterDocumentController*)self.ptFlutterDocumentController).openResult = flutterResult;
     
     PTFlutterDocumentController *documentController = (PTFlutterDocumentController *) [self getDocumentController];
     if (!documentController.isDocCtrlrConfigured) {
@@ -3657,7 +3655,7 @@
 #pragma mark - Helper
 
 - (PTDocumentController *)getDocumentController {
-    return [PdftronFlutterPlugin PT_getSelectedDocumentController:self.tabbedDocumentViewController];
+    return self.ptFlutterDocumentController;
 }
 
 + (PTDocumentController *)PT_getSelectedDocumentController:(PTTabbedDocumentViewController *)tabbedDocumentViewController {
