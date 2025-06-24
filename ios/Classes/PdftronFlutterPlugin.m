@@ -3817,6 +3817,12 @@
     else if ([key isEqualToString:PTPanToolKey]) {
         return [PTPanTool class];
     }
+    else if ([key isEqualToString:PTAnnotationSmartPenToolKey]) {
+        return [PTSmartPen class];
+    }
+    else if ([key isEqualToString:PTPencilKitDrawingToolKey]) {
+        return [PTPencilDrawingCreate class];
+    }
 
     return Nil;
 }
